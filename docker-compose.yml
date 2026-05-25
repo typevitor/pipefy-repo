@@ -3,3 +3,23 @@ services:
     build: .
     ports:
       - "8000:8000"
+    environment:
+      DATABASE_URL: "sqlite+aiosqlite:////data/app.db"
+      PIPEFY_TOKEN: ${PIPEFY_TOKEN}
+      PIPEFY_PIPE_ID: ${PIPEFY_PIPE_ID}
+      PIPEFY_WEBHOOK_SECRET: ${PIPEFY_WEBHOOK_SECRET}
+      PIPEFY_FIELD_NOME: ${PIPEFY_FIELD_NOME:-employee_name}
+      PIPEFY_FIELD_EMAIL: ${PIPEFY_FIELD_EMAIL:-email}
+      PIPEFY_FIELD_PATRIMONIO: ${PIPEFY_FIELD_PATRIMONIO:-patrimonio}
+      PIPEFY_FIELD_STATUS: ${PIPEFY_FIELD_STATUS:-status}
+      PIPEFY_FIELD_PRIORIDADE: ${PIPEFY_FIELD_PRIORIDADE:-prioridade}
+    volumes:
+      - db_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  db_data:
