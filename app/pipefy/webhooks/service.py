@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clientes import repository as clientes_repo
 from app.pipefy.client import PipefyClient
-from app.webhooks import repository as webhooks_repo
-from app.webhooks.schemas import WebhookPayload, WebhookResponse
+from app.pipefy.webhooks import repository as webhooks_repo
+from app.pipefy.webhooks.schemas import WebhookPayload, WebhookResponse
 
 logger = logging.getLogger(__name__)
 

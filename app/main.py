@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from app.clientes.router import router as clientes_router
 from app.core.database import create_tables, engine
-from app.webhooks.router import router as webhooks_router
+from app.pipefy.webhooks.router import router as webhooks_router
 
 
 @asynccontextmanager

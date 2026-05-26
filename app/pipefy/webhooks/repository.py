@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.webhooks.models import WebhookEvent
+from app.pipefy.webhooks.models import WebhookEvent
 
 
 async def get_event(session: AsyncSession, event_id: str) -> WebhookEvent | None:

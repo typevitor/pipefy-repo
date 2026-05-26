@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_session
 from app.pipefy.client import PipefyClient
 from app.pipefy.dependencies import get_pipefy_client
-from app.webhooks import service
-from app.webhooks.auth import verify_webhook_secret
-from app.webhooks.schemas import WebhookPayload, WebhookResponse
+from app.pipefy.webhooks import service
+from app.pipefy.webhooks.auth import verify_webhook_secret
+from app.pipefy.webhooks.schemas import WebhookPayload, WebhookResponse
 
 router = APIRouter(prefix="/webhooks/pipefy", tags=["webhooks"])
 
