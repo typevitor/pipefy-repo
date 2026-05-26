@@ -2,6 +2,8 @@
 
 FastAPI + SQLite API que gerencia clientes e integra com o Pipefy via GraphQL.
 
+As chamadas ao Pipefy são **simuladas**: o código monta as mutations exatas conforme a documentação oficial e as registra em log, mas não faz requests HTTP ao servidor do Pipefy.
+
 ---
 
 ## Pré-requisitos
@@ -55,22 +57,19 @@ docker compose up --build
 ## Testes
 
 ```bash
-uv run pytest -v
+PIPEFY_TOKEN=test PIPEFY_PIPE_ID=1 PIPEFY_WEBHOOK_SECRET=test-webhook-secret uv run pytest -v
 ```
 
 ---
 
-## Convenção de valores monetários
+## Regra de prioridade
 
-`valor_patrimonio` é sempre em **centavos (BRL × 100)** — sem ponto flutuante.
-
-| Valor real | valor_patrimonio |
+| `valor_patrimonio` | Prioridade |
 |---|---|
-| R$ 100.000,00 | `10000000` |
-| R$ 200.000,00 | `20000000` |
-| R$ 250.000,00 | `25000000` |
+| `>= 200000` (R$ 200.000,00) | `prioridade_alta` |
+| `< 200000` | `prioridade_normal` |
 
-Clientes com `valor_patrimonio >= 20000000` (R$ 200.000,00) recebem `prioridade_alta`.
+`valor_patrimonio` é um inteiro em reais. Exemplo: R$ 250.000,00 → `250000`.
 
 ---
 
@@ -85,7 +84,7 @@ curl -X POST http://localhost:8000/clientes \
     "cliente_nome": "João Silva",
     "cliente_email": "joao.silva@example.com",
     "tipo_solicitacao": "Atualização cadastral",
-    "valor_patrimonio": 25000000
+    "valor_patrimonio": 250000
   }'
 ```
 
@@ -96,10 +95,10 @@ Resposta `201 Created`:
   "nome": "João Silva",
   "email": "joao.silva@example.com",
   "tipo_solicitacao": "Atualização cadastral",
-  "valor_patrimonio": 25000000,
+  "valor_patrimonio": 250000,
   "status": "Aguardando Análise",
   "prioridade": null,
-  "pipefy_card_id": "123456"
+  "pipefy_card_id": "123456789"
 }
 ```
 
