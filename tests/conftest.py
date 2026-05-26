@@ -3,7 +3,7 @@ import os
 # Must be set before any app import — pydantic-settings reads on first Settings() call
 os.environ.setdefault("PIPEFY_TOKEN", "test-token")
 os.environ.setdefault("PIPEFY_PIPE_ID", "1")
-os.environ.setdefault("PIPEFY_WEBHOOK_SECRET", "test-webhook-secret")
+os.environ["PIPEFY_WEBHOOK_SECRET"] = "test-webhook-secret"
 
 import pytest
 import pytest_asyncio
