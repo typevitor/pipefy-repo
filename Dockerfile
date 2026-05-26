@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir --prefix=/install \
     "aiosqlite>=0.20" \
     "pydantic[email]>=2.0" \
     "pydantic-settings>=2.0" \
-    "httpx>=0.27"
+    "gql[httpx]>=3.5"
 
 # ---- runtime ----
 FROM python:3.12-slim AS runtime
