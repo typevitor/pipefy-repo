@@ -42,6 +42,10 @@ async def processar_webhook(
             logger.exception(
                 "Falha ao atualizar card %s no Pipefy", cliente.pipefy_card_id
             )
+    else:
+        logger.warning(
+            "Cliente %s sem card no Pipefy — update ignorado.", payload.cliente_email
+        )
 
     await clientes_repo.update_status_prioridade(session, cliente, "Processado", prioridade)
     try:

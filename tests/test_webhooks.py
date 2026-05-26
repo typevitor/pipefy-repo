@@ -91,3 +91,27 @@ async def test_webhook_idempotencia(client, mock_pipefy):
     assert r2.json()["status"] == "already_processed"
 
     assert mock_pipefy.update_card_fields.call_count == 1
+
+
+async def test_webhook_sem_card_pipefy(client, mock_pipefy):
+    mock_pipefy.create_card.side_effect = RuntimeError("Pipefy simulado indisponível")
+
+    await client.post("/clientes", json={
+        "cliente_nome": "Ana Lima",
+        "cliente_email": "ana.lima@example.com",
+        "tipo_solicitacao": "Resgate",
+        "valor_patrimonio": 300_000,
+    })
+
+    mock_pipefy.create_card.side_effect = None
+
+    response = await client.post("/webhooks/pipefy/card-updated", json={
+        "event_id": "evt_nocard",
+        "card_id": "card_nocard",
+        "cliente_email": "ana.lima@example.com",
+        "timestamp": "2026-05-25T12:00:00Z",
+    }, headers=AUTH)
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "processed"
+    mock_pipefy.update_card_fields.assert_not_called()

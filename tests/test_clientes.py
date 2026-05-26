@@ -34,3 +34,23 @@ async def test_create_cliente_email_duplicado(client, mock_pipefy):
 
     assert response.status_code == 409
     assert "Email já cadastrado" in response.json()["detail"]
+
+
+async def test_create_cliente_patrimonio_invalido(client):
+    response = await client.post("/clientes", json={
+        "cliente_nome": "João Silva",
+        "cliente_email": "joao.silva@example.com",
+        "tipo_solicitacao": "Atualização cadastral",
+        "valor_patrimonio": 0,
+    })
+    assert response.status_code == 422
+
+
+async def test_create_cliente_email_invalido(client):
+    response = await client.post("/clientes", json={
+        "cliente_nome": "João Silva",
+        "cliente_email": "nao-e-um-email",
+        "tipo_solicitacao": "Atualização cadastral",
+        "valor_patrimonio": 250_000,
+    })
+    assert response.status_code == 422
