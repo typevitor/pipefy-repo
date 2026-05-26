@@ -5,7 +5,7 @@ class ClienteCreate(BaseModel):
     cliente_nome: str
     cliente_email: EmailStr
     tipo_solicitacao: str
-    valor_patrimonio: int  # centavos — R$ 250.000,00 → 25000000
+    valor_patrimonio: int
 
     @field_validator("valor_patrimonio")
     @classmethod
@@ -20,7 +20,7 @@ class ClienteRead(BaseModel):
     nome: str
     email: str
     tipo_solicitacao: str
-    valor_patrimonio: int  # centavos
+    valor_patrimonio: int
     status: str
     prioridade: str | None
     pipefy_card_id: str | None

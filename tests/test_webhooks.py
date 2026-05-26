@@ -8,7 +8,7 @@ async def test_webhook_prioridade_alta(client, mock_pipefy):
         "cliente_nome": "João Silva",
         "cliente_email": "joao.silva@example.com",
         "tipo_solicitacao": "Atualização cadastral",
-        "valor_patrimonio": 25_000_000,  # R$ 250.000,00
+        "valor_patrimonio": 250_000,
     })
 
     response = await client.post("/webhooks/pipefy/card-updated", json={
@@ -29,7 +29,7 @@ async def test_webhook_prioridade_normal(client, mock_pipefy):
         "cliente_nome": "Maria Santos",
         "cliente_email": "maria.santos@example.com",
         "tipo_solicitacao": "Cadastro novo",
-        "valor_patrimonio": 10_000_000,  # R$ 100.000,00
+        "valor_patrimonio": 100_000,
     })
 
     response = await client.post("/webhooks/pipefy/card-updated", json={
@@ -51,7 +51,7 @@ async def test_webhook_sem_autenticacao(client, mock_pipefy):
         "card_id": "card_003",
         "cliente_email": "joao.silva@example.com",
         "timestamp": "2026-05-25T12:00:00Z",
-    })  # no X-Webhook-Secret header
+    })
 
     assert response.status_code == 401
 
@@ -72,7 +72,7 @@ async def test_webhook_idempotencia(client, mock_pipefy):
         "cliente_nome": "Carlos Oliveira",
         "cliente_email": "carlos.oliveira@example.com",
         "tipo_solicitacao": "Resgate",
-        "valor_patrimonio": 30_000_000,  # R$ 300.000,00
+        "valor_patrimonio": 300_000,
     })
 
     payload = {

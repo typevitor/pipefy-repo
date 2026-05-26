@@ -11,7 +11,7 @@ from app.webhooks.schemas import WebhookPayload, WebhookResponse
 
 logger = logging.getLogger(__name__)
 
-PRIORIDADE_ALTA_THRESHOLD = 20_000_000  # R$ 200.000,00 em centavos
+PRIORIDADE_ALTA_THRESHOLD = 200_000  # R$ 200.000,00
 
 
 async def processar_webhook(
