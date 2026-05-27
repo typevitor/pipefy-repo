@@ -5,9 +5,11 @@ STATUS_LABEL: dict[int, str] = {
     STATUS_PROCESSADO: "Processado",
 }
 
+PRIORIDADE_INDEFINIDA = "prioridade_indefinida"
 PRIORIDADE_NORMAL = "prioridade_normal"
 PRIORIDADE_ALTA = "prioridade_alta"
 PRIORIDADE_LABEL: dict[str, str] = {
+    PRIORIDADE_INDEFINIDA: "Indefinido",
     PRIORIDADE_NORMAL: "Normal",
     PRIORIDADE_ALTA: "Alta",
 }

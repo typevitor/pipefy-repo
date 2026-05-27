@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clientes.models import Cliente
-from app.core.constants import STATUS_PENDENTE
+from app.core.constants import PRIORIDADE_INDEFINIDA, STATUS_PENDENTE
 
 
 async def insert(
@@ -18,6 +18,7 @@ async def insert(
         tipo_solicitacao=tipo_solicitacao,
         valor_patrimonio=valor_patrimonio,
         status=STATUS_PENDENTE,
+        prioridade=PRIORIDADE_INDEFINIDA,
     )
     session.add(cliente)
     await session.commit()
