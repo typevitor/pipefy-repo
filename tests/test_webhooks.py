@@ -22,6 +22,7 @@ async def test_webhook_prioridade_alta(client, mock_pipefy):
     data = response.json()
     assert data["status"] == "processed"
     assert data["prioridade"] == "prioridade_alta"
+    assert data["prioridade_label"] == "Alta"
 
 
 async def test_webhook_prioridade_normal(client, mock_pipefy):
@@ -43,6 +44,7 @@ async def test_webhook_prioridade_normal(client, mock_pipefy):
     data = response.json()
     assert data["status"] == "processed"
     assert data["prioridade"] == "prioridade_normal"
+    assert data["prioridade_label"] == "Normal"
 
 
 async def test_webhook_sem_autenticacao(client, mock_pipefy):

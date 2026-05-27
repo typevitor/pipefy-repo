@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clientes.models import Cliente
+from app.core.constants import STATUS_PENDENTE
 
 
 async def insert(
@@ -16,7 +17,7 @@ async def insert(
         email=email,
         tipo_solicitacao=tipo_solicitacao,
         valor_patrimonio=valor_patrimonio,
-        status="Aguardando Análise",
+        status=STATUS_PENDENTE,
     )
     session.add(cliente)
     await session.commit()
@@ -37,7 +38,7 @@ async def update_pipefy_card_id(
 
 
 async def update_status_prioridade(
-    session: AsyncSession, cliente: Cliente, status: str, prioridade: str
+    session: AsyncSession, cliente: Cliente, status: int, prioridade: str
 ) -> Cliente:
     cliente.status = status
     cliente.prioridade = prioridade

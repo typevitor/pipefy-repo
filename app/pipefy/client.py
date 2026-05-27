@@ -4,8 +4,16 @@ from gql import Client, gql
 from gql.transport.httpx import HTTPXAsyncTransport
 
 from app.core.config import get_settings
+from app.core.constants import STATUS_PENDENTE, STATUS_PROCESSADO
 
 logger = logging.getLogger(__name__)
+
+PIPEFY_STATUS_PENDENTE = "pending"
+PIPEFY_STATUS_PROCESSADO = "processed"
+PIPEFY_STATUS_MAP: dict[int, str] = {
+    STATUS_PENDENTE: PIPEFY_STATUS_PENDENTE,
+    STATUS_PROCESSADO: PIPEFY_STATUS_PROCESSADO,
+}
 
 FIELD_NOME = "employee_name"
 FIELD_EMAIL = "email"
@@ -61,12 +69,12 @@ class PipefyClient:
         logger.info("[PIPEFY SIMULATION] card_id=%s", card_id)
         return card_id
 
-    async def update_card_fields(self, card_id: str, status: str, prioridade: str) -> bool:
+    async def update_card_fields(self, card_id: str, status: int, prioridade: str) -> bool:
         variables = {
             "input": {
                 "nodeId": int(card_id),
                 "values": [
-                    {"fieldId": FIELD_STATUS, "value": status},
+                    {"fieldId": FIELD_STATUS, "value": PIPEFY_STATUS_MAP[status]},
                     {"fieldId": FIELD_PRIORIDADE, "value": prioridade},
                 ],
             }

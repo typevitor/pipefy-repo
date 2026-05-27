@@ -13,3 +13,4 @@ class WebhookPayload(BaseModel):
 class WebhookResponse(BaseModel):
     status: str
     prioridade: str | None = None
+    prioridade_label: str | None = None

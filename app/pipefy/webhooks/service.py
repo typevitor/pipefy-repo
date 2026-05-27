@@ -6,6 +6,12 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clientes import repository as clientes_repo
+from app.core.constants import (
+    PRIORIDADE_ALTA,
+    PRIORIDADE_LABEL,
+    PRIORIDADE_NORMAL,
+    STATUS_PROCESSADO,
+)
 from app.pipefy.client import PipefyClient
 from app.pipefy.webhooks import repository as webhooks_repo
 from app.pipefy.webhooks.schemas import WebhookPayload, WebhookResponse
@@ -27,16 +33,16 @@ async def processar_webhook(
         raise HTTPException(status_code=404, detail="Cliente não encontrado.")
 
     prioridade = (
-        "prioridade_alta"
+        PRIORIDADE_ALTA
         if cliente.valor_patrimonio >= PRIORIDADE_ALTA_THRESHOLD
-        else "prioridade_normal"
+        else PRIORIDADE_NORMAL
     )
 
     if cliente.pipefy_card_id:
         try:
             await pipefy.update_card_fields(
                 card_id=cliente.pipefy_card_id,
-                status="Processado",
+                status=STATUS_PROCESSADO,
                 prioridade=prioridade,
             )
         except Exception:
@@ -48,11 +54,15 @@ async def processar_webhook(
             "Cliente %s sem card no Pipefy — update ignorado.", payload.cliente_email
         )
 
-    await clientes_repo.update_status_prioridade(session, cliente, "Processado", prioridade)
+    await clientes_repo.update_status_prioridade(session, cliente, STATUS_PROCESSADO, prioridade)
     try:
         await webhooks_repo.insert_event(session, payload.event_id)
     except IntegrityError:
         await session.rollback()
         return JSONResponse(status_code=409, content={"status": "error", "message": "already_processed"})
 
-    return WebhookResponse(status="processed", prioridade=prioridade)
+    return WebhookResponse(
+        status="processed",
+        prioridade=prioridade,
+        prioridade_label=PRIORIDADE_LABEL[prioridade],
+    )

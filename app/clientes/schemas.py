@@ -1,4 +1,6 @@
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, computed_field, field_validator
+
+from app.core.constants import PRIORIDADE_LABEL, STATUS_LABEL
 
 
 class ClienteCreate(BaseModel):
@@ -21,8 +23,18 @@ class ClienteRead(BaseModel):
     email: str
     tipo_solicitacao: str
     valor_patrimonio: int
-    status: str
+    status: int
     prioridade: str | None
     pipefy_card_id: str | None
 
     model_config = {"from_attributes": True}
+
+    @computed_field
+    @property
+    def status_label(self) -> str:
+        return STATUS_LABEL.get(self.status, str(self.status))
+
+    @computed_field
+    @property
+    def prioridade_label(self) -> str | None:
+        return PRIORIDADE_LABEL.get(self.prioridade) if self.prioridade else None
