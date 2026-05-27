@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import HTTPException
+from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,7 +20,7 @@ async def processar_webhook(
 ) -> WebhookResponse:
     existing = await webhooks_repo.get_event(session, payload.event_id)
     if existing:
-        return WebhookResponse(status="already_processed")
+        return JSONResponse(status_code=409, content={"status": "error", "message": "already_processed"})
 
     cliente = await clientes_repo.get_by_email(session, str(payload.cliente_email))
     if not cliente:
@@ -52,6 +53,6 @@ async def processar_webhook(
         await webhooks_repo.insert_event(session, payload.event_id)
     except IntegrityError:
         await session.rollback()
-        return WebhookResponse(status="already_processed")
+        return JSONResponse(status_code=409, content={"status": "error", "message": "already_processed"})
 
     return WebhookResponse(status="processed", prioridade=prioridade)

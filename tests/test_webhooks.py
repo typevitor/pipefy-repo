@@ -87,8 +87,9 @@ async def test_webhook_idempotencia(client, mock_pipefy):
     assert r1.json()["status"] == "processed"
 
     r2 = await client.post("/webhooks/pipefy/card-updated", json=payload, headers=AUTH)
-    assert r2.status_code == 200
-    assert r2.json()["status"] == "already_processed"
+    assert r2.status_code == 409
+    assert r2.json()["status"] == "error"
+    assert r2.json()["message"] == "already_processed"
 
     assert mock_pipefy.update_card_fields.call_count == 1
 
