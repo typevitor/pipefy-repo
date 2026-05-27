@@ -10,11 +10,7 @@ class Settings(BaseSettings):
     pipefy_token: str = ""
     pipefy_pipe_id: int = 0
     pipefy_webhook_secret: str = ""
-    pipefy_field_nome: str = "employee_name"
-    pipefy_field_email: str = "email"
-    pipefy_field_patrimonio: str = "patrimonio"
-    pipefy_field_status: str = "status"
-    pipefy_field_prioridade: str = "prioridade"
+    pipefy_endpoint: str = ""
 
 
 @lru_cache

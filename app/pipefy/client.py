@@ -7,7 +7,11 @@ from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-ENDPOINT = "https://api.pipefy.com/graphql"
+FIELD_NOME = "employee_name"
+FIELD_EMAIL = "email"
+FIELD_PATRIMONIO = "patrimonio"
+FIELD_STATUS = "status"
+FIELD_PRIORIDADE = "prioridade"
 
 CREATE_CARD_MUTATION = gql("""
     mutation CreateCard($input: CreateCardInput!) {
@@ -33,7 +37,7 @@ class PipefyClient:
     def __init__(self) -> None:
         self._s = get_settings()
         transport = HTTPXAsyncTransport(
-            url=ENDPOINT,
+            url=self._s.pipefy_endpoint,
             headers={"Authorization": f"Bearer {self._s.pipefy_token}"},
         )
         self._client = Client(transport=transport)
@@ -44,9 +48,9 @@ class PipefyClient:
                 "pipe_id": self._s.pipefy_pipe_id,
                 "title": nome,
                 "fields_attributes": [
-                    {"field_id": self._s.pipefy_field_nome, "field_value": nome},
-                    {"field_id": self._s.pipefy_field_email, "field_value": email},
-                    {"field_id": self._s.pipefy_field_patrimonio, "field_value": str(valor_patrimonio)},
+                    {"field_id": FIELD_NOME, "field_value": nome},
+                    {"field_id": FIELD_EMAIL, "field_value": email},
+                    {"field_id": FIELD_PATRIMONIO, "field_value": str(valor_patrimonio)},
                 ],
             }
         }
@@ -62,8 +66,8 @@ class PipefyClient:
             "input": {
                 "nodeId": int(card_id),
                 "values": [
-                    {"fieldId": self._s.pipefy_field_status, "value": status},
-                    {"fieldId": self._s.pipefy_field_prioridade, "value": prioridade},
+                    {"fieldId": FIELD_STATUS, "value": status},
+                    {"fieldId": FIELD_PRIORIDADE, "value": prioridade},
                 ],
             }
         }
