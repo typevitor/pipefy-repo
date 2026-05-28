@@ -114,8 +114,7 @@ async def test_webhook_atualiza_status_cliente(client, mock_pipefy):
     response = await client.get("/clientes/joao.silva@example.com")
     assert response.status_code == 200
     data = response.json()
-    assert data["status"] == 2
-    assert data["status_label"] == "Processado"
+    assert data["status"] == "Processado"
     assert data["prioridade"] == "prioridade_alta"
     assert data["prioridade_label"] == "Alta"
 
