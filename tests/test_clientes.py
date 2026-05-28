@@ -35,7 +35,7 @@ async def test_create_cliente_email_duplicado(client, mock_pipefy):
     response = await client.post("/clientes", json=payload)
 
     assert response.status_code == 409
-    assert "Email já cadastrado" in response.json()["detail"]
+    assert "Email já cadastrado" in response.json()["message"]
 
 
 async def test_create_cliente_patrimonio_invalido(client):

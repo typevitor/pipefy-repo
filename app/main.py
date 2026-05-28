@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 
 from app.clientes.router import router as clientes_router
 from app.core.database import create_tables, engine
@@ -15,6 +16,11 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="pipefy-test", lifespan=lifespan)
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    return JSONResponse(status_code=exc.status_code, content={"message": exc.detail})
 
 app.include_router(clientes_router)
 app.include_router(webhooks_router)
