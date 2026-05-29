@@ -8,4 +8,4 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
-docker compose up -d --build
+docker compose up --build
