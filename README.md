@@ -116,7 +116,7 @@ Resposta `200 OK`:
   "tipo_solicitacao": "Atualização cadastral",
   "valor_patrimonio": 250000,
   "status": "Aguardando Análise",
-  "prioridade": null,
+  "prioridade": "prioridade_indefinida",
   "pipefy_card_id": "123456789"
 }
 ```
@@ -124,6 +124,23 @@ Resposta `200 OK`:
 ### Processar webhook
 
 Requer o header `X-Webhook-Secret` com o valor de `PIPEFY_WEBHOOK_SECRET`. Requisições sem o header ou com valor errado retornam `401`.
+
+> **Configuração no Pipefy:** o Pipefy não envia `X-Webhook-Secret` automaticamente. Ao registrar o webhook via `createWebhook` (GraphQL), passe o campo `headers` com o segredo:
+>
+> ```graphql
+> mutation {
+>   createWebhook(input: {
+>     pipe_id: "<PIPE_ID>"
+>     url: "https://seu-dominio/webhooks/pipefy/card-updated"
+>     actions: ["card.move"]
+>     headers: "{\"X-Webhook-Secret\": \"<PIPEFY_WEBHOOK_SECRET>\"}"
+>   }) {
+>     webhook { id }
+>   }
+> }
+> ```
+>
+> O Pipefy incluirá esse header em cada chamada ao seu endpoint, e a API o valida como segredo compartilhado.
 
 ```bash
 curl -X POST http://localhost:8000/webhooks/pipefy/card-updated \
