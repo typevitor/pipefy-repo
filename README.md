@@ -13,10 +13,10 @@ As chamadas ao Pipefy são **simuladas**: o código monta as mutations GraphQL e
 
 **Regra de prioridade:**
 
-| `valor_patrimonio` | Prioridade |
-|---|---|
-| `>= 200000` | `prioridade_alta` |
-| `< 200000` | `prioridade_normal` |
+| `valor_patrimonio` | Prioridade          |
+| ------------------ | ------------------- |
+| `>= 200000`        | `prioridade_alta`   |
+| `< 200000`         | `prioridade_normal` |
 
 `valor_patrimonio` é um inteiro em **centavos**. Exemplo: R$ 2.500,00 → `250000`.
 
@@ -40,11 +40,11 @@ chmod +x scripts/init.sh
 
 Na primeira execução, se o `.env` não existir, o script cria um a partir do `.env.example` e encerra. Preencha as variáveis obrigatórias e rode `./scripts/init.sh` novamente.
 
-| Variável | Obrigatória | Descrição |
-|---|---|---|
-| `PIPEFY_TOKEN` | ✅ | Service Account token (Settings → Service Accounts no Pipefy) |
-| `PIPEFY_PIPE_ID` | ✅ | ID numérico do Pipe de destino |
-| `PIPEFY_WEBHOOK_SECRET` | ✅ | Segredo compartilhado para autenticar webhooks (header `X-Webhook-Secret`) |
+| Variável                | Obrigatória | Descrição                                                                  |
+| ----------------------- | ----------- | -------------------------------------------------------------------------- |
+| `PIPEFY_TOKEN`          | ✅          | Service Account token (Settings → Service Accounts no Pipefy)              |
+| `PIPEFY_PIPE_ID`        | ✅          | ID numérico do Pipe de destino                                             |
+| `PIPEFY_WEBHOOK_SECRET` | ✅          | Segredo compartilhado para autenticar webhooks (header `X-Webhook-Secret`) |
 
 Após subir, a API estará disponível em `http://localhost:8000` e a documentação interativa em `http://localhost:8000/docs`.
 
@@ -62,8 +62,7 @@ uv run uvicorn app.main:app --reload
 Os testes usam SQLite in-memory e Pipefy mockado — não dependem do `.env` de produção.
 
 ```bash
-docker compose run --rm api sh -c \
-  "PIPEFY_TOKEN=test PIPEFY_PIPE_ID=1 PIPEFY_WEBHOOK_SECRET=test-webhook-secret uv run pytest -v"
+docker compose run --rm test
 ```
 
 ---
@@ -84,6 +83,7 @@ curl -X POST http://localhost:8000/clientes \
 ```
 
 Resposta `201 Created`:
+
 ```json
 {
   "id": 1,
@@ -91,8 +91,8 @@ Resposta `201 Created`:
   "email": "joao.silva@example.com",
   "tipo_solicitacao": "Atualização cadastral",
   "valor_patrimonio": 250000,
-  "status": "Aguardando Análise",
-  "prioridade": null,
+  "status": "Pendente",
+  "prioridade": "Indefinido",
   "pipefy_card_id": "123456789"
 }
 ```
@@ -104,6 +104,7 @@ curl http://localhost:8000/clientes/joao.silva@example.com
 ```
 
 Resposta `200 OK`:
+
 ```json
 {
   "id": 1,
@@ -134,11 +135,13 @@ curl -X POST http://localhost:8000/webhooks/pipefy/card-updated \
 ```
 
 Resposta `200 OK`:
+
 ```json
 { "status": "processed", "prioridade": "prioridade_alta" }
 ```
 
 Segunda chamada com o mesmo `event_id` (idempotência):
+
 ```json
 { "status": "already_processed", "prioridade": null }
 ```
