@@ -15,7 +15,6 @@ async def test_create_cliente_valido(client, mock_pipefy):
     assert data["valor_patrimonio"] == 250_000
     assert data["status"] == "Pendente"
     assert data["prioridade"] == "prioridade_indefinida"
-    assert data["prioridade_label"] == "Indefinido"
     mock_pipefy.create_card.assert_called_once_with(
         nome="João Silva",
         email="joao.silva@example.com",

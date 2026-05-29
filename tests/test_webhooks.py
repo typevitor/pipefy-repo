@@ -116,7 +116,6 @@ async def test_webhook_atualiza_status_cliente(client, mock_pipefy):
     data = response.json()
     assert data["status"] == "Processado"
     assert data["prioridade"] == "prioridade_alta"
-    assert data["prioridade_label"] == "Alta"
 
 
 async def test_webhook_sem_card_pipefy(client, mock_pipefy):
