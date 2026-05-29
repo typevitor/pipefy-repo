@@ -169,3 +169,13 @@ Segunda chamada com o mesmo `event_id` (idempotência):
 ---
 
 ## Visão de Produção na AWS
+
+Em um ambiente de produção na AWS, essa estrutura escalaria de forma natural com o volume de webhooks recebidos.
+
+O **API Gateway** ficaria na porta de entrada: receberia cada chamada do Pipefy, validaria o header `X-Webhook-Secret`, aplicaria um **rate limiter** para proteger o sistema contra rajadas de requisições e encaminharia o evento para uma **função Lambda**.
+
+Dentro do Lambda, a idempotência é garantida com um **compare-and-set atômico** no **DynamoDB**: o código tenta gravar o `event_id` usando `ConditionExpression: attribute_not_exists(event_id)`. Se o item já existir, o DynamoDB rejeita a escrita e a função retorna `HTTP 409 Conflict` sem executar a lógica de negócio — eliminando qualquer janela de race condition em cenários de alta concorrência. O item carrega um **TTL** configurado para expirar após um período razoável (por exemplo, 24 horas). Em caso de falha no processamento, o registro deve ser removido do DynamoDB para permitir que o webhook seja reprocessado corretamente.
+
+Os registros principais dos webhooks — dados do cliente, status, histórico — ficariam persistidos em um **AWS RDS** com **Aurora** ou **PostgreSQL**, garantindo consistência transacional e consultas relacionais conforme a necessidade do negócio.
+
+Como o Lambda escala automaticamente com a demanda, o sistema absorveria picos de volume de webhooks sem configuração adicional: cada webhook dispara sua própria invocação, e a AWS provisiona a capacidade necessária de forma transparente.
