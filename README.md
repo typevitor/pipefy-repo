@@ -62,7 +62,10 @@ uv run uvicorn app.main:app --reload
 Os testes usam SQLite in-memory e Pipefy mockado — não dependem do `.env` de produção.
 
 ```bash
-docker compose run --rm test
+docker compose run --rm \
+  -e DATABASE_URL="sqlite+aiosqlite:///:memory:" \
+  -e PIPEFY_TOKEN=test -e PIPEFY_PIPE_ID=1 -e PIPEFY_WEBHOOK_SECRET=test-webhook-secret \
+  api python -m pytest -v
 ```
 
 ---

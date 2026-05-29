@@ -9,6 +9,7 @@ services:
       PIPEFY_PIPE_ID: ${PIPEFY_PIPE_ID:-0}
       PIPEFY_WEBHOOK_SECRET: ${PIPEFY_WEBHOOK_SECRET:-}
     volumes:
+      - .:/app
       - db_data:/data
     healthcheck:
       test:
