@@ -1,9 +1,8 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.clientes import repository as repo
 from app.clientes import service
 from app.clientes.schemas import ClienteCreate, ClienteRead
 from app.core.database import get_session
@@ -25,7 +24,4 @@ async def criar_cliente(
 
 @router.get("/{email}", response_model=ClienteRead)
 async def get_cliente(email: str, session: SessionDep) -> ClienteRead:
-    cliente = await repo.get_by_email(session, email)
-    if not cliente:
-        raise HTTPException(status_code=404, detail="Cliente não encontrado.")
-    return ClienteRead.model_validate(cliente)
+    return await service.get_cliente(session, email)

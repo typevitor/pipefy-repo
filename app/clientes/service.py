@@ -10,6 +10,13 @@ from app.pipefy.client import PipefyClient
 logger = logging.getLogger(__name__)
 
 
+async def get_cliente(session: AsyncSession, email: str) -> ClienteRead:
+    cliente = await repo.get_by_email(session, email)
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado.")
+    return ClienteRead.model_validate(cliente)
+
+
 async def criar_cliente(
     session: AsyncSession, payload: ClienteCreate, pipefy: PipefyClient
 ) -> ClienteRead:
